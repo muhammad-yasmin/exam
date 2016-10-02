@@ -1,0 +1,2 @@
+[20-Aug-2016 11:07:51 UTC] PHP Deprecated:  mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead in /home/rplsmknm/public_html/smk5/config/dbconfig.php on line 11
+[09-Sep-2016 16:38:11 UTC] PHP Deprecated:  mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead in /home/rplsmknm/public_html/exam/config/dbconfig.php on line 11

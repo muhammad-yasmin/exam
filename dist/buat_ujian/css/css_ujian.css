@@ -1,0 +1,108 @@
+		@font-face {
+			font-family: Roboto;
+			src: url('../../fonts/Roboto-Regular.ttf');
+		}
+		* {
+		    margin: 0;
+		    padding: 0;
+		}
+
+		.btn-circle {
+		  width: 30px;
+		  height: 30px;
+		  text-align: center;
+		  padding: 6px 0;
+		  font-size: 12px;
+		  line-height: 1.42;
+		  border-radius: 15px;
+		}
+
+		.audio-player{
+			width: 250px;
+		}
+		body {
+			font-family: Roboto;
+			padding-top: 50px;
+			overflow-x: hidden;
+		}
+		.jumbotron{
+			z-index: 100;
+			position: fixed;
+			width: 100%;
+		}
+		#soal_dragend{
+			margin-top: 120px;
+		}
+		#page_wrap{
+			width: 100vw;
+		    padding-right: 0;
+		    -webkit-transition: all 0.5s ease;
+		    -moz-transition: all 0.5s ease;
+		    -o-transition: all 0.5s ease;
+		    transition: all 0.5s ease;
+		}
+		#page_wrap.toggled {
+			padding-right:300px;
+		}
+		#sidebar {
+			z-index: 1000;
+		    position: fixed;
+		    right: 300px;
+		    width: 0;
+		    height: 80%;
+		    margin-right: -300px;
+		    overflow-y:auto;
+		    background-color: #aaa;
+		    -webkit-transition: all 0.5s ease;
+		    -moz-transition: all 0.5s ease;
+		    -o-transition: all 0.5s ease;
+		    transition: all 0.5s ease;
+		}
+		#page_wrap.toggled #sidebar{
+			width: 300px;
+		}
+		#content_page {
+			width: 100vw;
+		}
+		
+
+		.a_no_soal {
+			padding: 10px 0;
+			text-align: center;
+			background: #E74C4C;
+			color: #fff;
+			font-size: 16px;
+			border: 1px solid #aaa;
+		}
+		.a_no_soal:hover {
+			opacity: 0.7;
+		}
+		div.radio label.label-radio{
+			margin: 7px 0;
+		}
+		label.label-radio>span:hover{
+		    opacity: 0.7;
+		  }
+		 label.label-radio>span{
+		      background: #E74C4C;
+		      color:#fff;
+		      width: 50px;
+		      text-align: center;
+		      padding: 8px 10px;
+		      border: 1px solid #eee;
+		      border-radius: 5px;
+		      cursor: pointer;
+		  }
+		  label.label-radio>span.checked{
+		      background: #3498DB;
+		  }
+		  label.label-radio>span.benar{
+		      background: #26A65B;
+		  }
+
+		  input[type="radio"]{
+		      display: none;
+		  }
+		input:checked  + span.span_cls_opsi{
+		        background: #3498DB;
+		  }

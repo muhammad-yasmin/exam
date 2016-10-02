@@ -1,0 +1,5 @@
+[09-Sep-2016 15:50:41 UTC] PHP Deprecated:  mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead in /home/rplsmknm/public_html/exam/config/dbconfig.php on line 11
+[09-Sep-2016 15:50:41 UTC] PHP Deprecated:  mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead in /home/rplsmknm/public_html/exam/config/dbconfig.php on line 11
+[09-Sep-2016 15:51:01 UTC] PHP Deprecated:  mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead in /home/rplsmknm/public_html/exam/config/dbconfig.php on line 11
+[09-Sep-2016 15:51:03 UTC] PHP Deprecated:  mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead in /home/rplsmknm/public_html/exam/config/dbconfig.php on line 11
+[09-Sep-2016 15:51:03 UTC] PHP Deprecated:  mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead in /home/rplsmknm/public_html/exam/config/dbconfig.php on line 11

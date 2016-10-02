@@ -1,0 +1,117 @@
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Roboto Regular'), 
+       local('Roboto-Regular'), 
+       url(http://themes.googleusercontent.com/static/fonts/roboto/v11/2UX7WLTfW3W8TclTUvlFyQ.woff) 
+       format('woff');
+}
+body{
+    font-family: Roboto;
+    margin-top: 0;
+    background-color: #fff;
+    overflow-x : hidden;
+  }
+
+  #navbar-soal{
+    position: fixed;
+    z-index: 1000;
+    /* background-color:#3498DB; */
+    /* rgba(244, 67, 54,0.7) */
+    background: 
+      linear-gradient(
+        rgba(33, 150, 243,0.7),
+        rgba(33, 150, 243,0.7)
+      ),
+      url(../img/pattern.png);
+    background-repeat: repeat;
+    
+    width:100%;
+    height:110px;
+    color:#fff;
+    padding: 15px;
+  }
+  #contentnya{
+    padding-top: 120px;
+  }
+  #menu_samping{
+    position: fixed;
+    right:0;
+  }
+  /* #panel-jawaban{
+    position: fixed;
+    bottom: 0;
+  } */
+  #panel-nomor{
+    height: 250px;
+  }
+  #countdown{
+    font-size:20px;
+    text-align: center;
+  }
+  .a_no_soal{
+    padding: 0;
+    text-align:center;
+    background-color:#E74C4C;
+    color:#fff;
+    border:1px solid white;
+  }
+  #a_no_soal:hover{
+    opacity: 0.7;
+  }
+  #btn_next_prev{
+    text-align:center;
+    background-color:#3498DB;
+    color:#fff;
+    border:1px solid white;
+  }
+  #btn_next_prev:hover{
+    opacity: 0.7;
+  }
+ label.label-radio>span:hover{
+    opacity: 0.7;
+  }
+ label.label-radio>span{
+      background: #E74C4C;
+      color:#fff;
+      width: 50px;
+      text-align: center;
+      padding: 10px;
+      border: 1px solid #eee;
+      border-radius: 5px;
+      cursor: pointer;
+  }
+  input[type="radio"]{
+      display: none;
+  }
+input:checked  + span{
+        background: #3498DB;
+  }
+
+  @media (max-width: 980px) {
+    body{
+            overflow-x : auto;
+            height: 100%;
+        }
+    #navbar-soal{
+      /* background-color:#3498DB; */
+      /* rgba(244, 67, 54,0.7) */
+      background: 
+        linear-gradient(
+          rgba(33, 150, 243,0.7),
+          rgba(33, 150, 243,0.7)
+        ),
+        url(../img/pattern.png);
+      background-repeat: repeat;
+      
+      width:100%;
+      height:210px;
+      color:#fff;
+      padding: 15px;
+    }
+    #contentnya{
+      padding-top: 220px;
+    }
+  }
+
