@@ -1,0 +1,1102 @@
+/*
+Navicat MySQL Data Transfer
+
+Source Server         : me
+Source Server Version : 50633
+Source Host           : localhost:3306
+Source Database       : db_exam_multiple
+
+Target Server Type    : MYSQL
+Target Server Version : 50633
+File Encoding         : 65001
+
+Date: 2016-10-02 18:24:28
+*/
+
+SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for aktivasi_bank_soal
+-- ----------------------------
+DROP TABLE IF EXISTS `aktivasi_bank_soal`;
+CREATE TABLE `aktivasi_bank_soal` (
+  `id_aktivasi_bank_soal` int(11) NOT NULL AUTO_INCREMENT,
+  `id_bank_soal_ujian` int(11) DEFAULT NULL,
+  `tanggal_aktif` date DEFAULT NULL,
+  `jam_aktif` time DEFAULT NULL COMMENT 'mulai menampilkan soal ujian',
+  `jam_mulai` time DEFAULT NULL COMMENT 'mulai mengerjakan soal ujian',
+  `status` enum('open','close') DEFAULT NULL,
+  `fullscreen` enum('1','0') DEFAULT NULL,
+  `block_text` enum('1','0') DEFAULT NULL,
+  `focus` enum('1','0') DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_aktivasi_bank_soal`),
+  KEY `idx_banksoalujian_aktivasibanksoal` (`id_bank_soal_ujian`) USING BTREE,
+  KEY `idx_log_aktivasibanksoal` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_banksoalujian_aktivasibanksoal` FOREIGN KEY (`id_bank_soal_ujian`) REFERENCES `bank_soal_ujian_tabel` (`id_bank_soal_ujian`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_log_aktivasibanksoal` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='tabel ini digunakan untuk mensetting kumpulan soal yang akan dipakai ujian';
+
+-- ----------------------------
+-- Records of aktivasi_bank_soal
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for audio_soal_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `audio_soal_tabel`;
+CREATE TABLE `audio_soal_tabel` (
+  `id_audio` int(11) NOT NULL AUTO_INCREMENT,
+  `file` text,
+  `id_soal` int(11) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_audio`),
+  KEY `idx_soal_audiosoal` (`id_soal`) USING BTREE,
+  KEY `idx_log_audiosoal` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_log_audiosoal` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_soal_audiosoal` FOREIGN KEY (`id_soal`) REFERENCES `soal_tabel` (`id_soal`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of audio_soal_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for bank_hasil_ujian_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `bank_hasil_ujian_tabel`;
+CREATE TABLE `bank_hasil_ujian_tabel` (
+  `id_bank_hasil_ujian` int(11) NOT NULL AUTO_INCREMENT,
+  `id_siswa` int(11) DEFAULT NULL,
+  `id_bank_soal_ujian` int(11) DEFAULT NULL,
+  `tgl_ujian` date DEFAULT NULL,
+  `jml_soal_benar` int(5) DEFAULT NULL,
+  `jml_soal_salah` int(5) DEFAULT NULL,
+  `jml_soal_kosong` int(5) DEFAULT NULL,
+  `skor_nilai` double(3,0) DEFAULT NULL,
+  `keterangan` enum('REMIDI','LULUS') DEFAULT 'REMIDI',
+  `peringatan` int(5) DEFAULT NULL,
+  `browser` text,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_bank_hasil_ujian`),
+  KEY `idx_siswa_bankhasilujian` (`id_siswa`) USING BTREE,
+  KEY `idx_banksoalujian_bankhasilujian` (`id_bank_soal_ujian`) USING BTREE,
+  CONSTRAINT `fk_banksoalujian_bankhasilujian` FOREIGN KEY (`id_bank_soal_ujian`) REFERENCES `bank_soal_ujian_tabel` (`id_bank_soal_ujian`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_siswa_bankhasilujian` FOREIGN KEY (`id_siswa`) REFERENCES `siswa_tabel` (`id_siswa`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of bank_hasil_ujian_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for bank_soal_ujian_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `bank_soal_ujian_tabel`;
+CREATE TABLE `bank_soal_ujian_tabel` (
+  `id_bank_soal_ujian` int(11) NOT NULL AUTO_INCREMENT,
+  `nama_bank_soal_ujian` varchar(100) DEFAULT NULL,
+  `id_nama_ujian` int(11) DEFAULT NULL,
+  `id_mapel` int(11) DEFAULT NULL,
+  `id_guru` int(11) DEFAULT NULL COMMENT 'sebagai penyusun bukan pembuat',
+  `id_jurusan` int(11) DEFAULT NULL,
+  `id_tahun_ajaran` int(11) DEFAULT NULL,
+  `semester` enum('GANJIL','GENAP') DEFAULT NULL,
+  `id_tingkat` int(11) DEFAULT NULL,
+  `jumlah_soal` int(3) DEFAULT NULL,
+  `lama_waktu` int(3) DEFAULT NULL,
+  `password_bank` text,
+  `aktif_bahas` enum('ya','tidak') DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_bank_soal_ujian`),
+  KEY `idx_guru_banksoalujian` (`id_guru`) USING BTREE,
+  KEY `idx_tahunajaran_banksoalujian` (`id_tahun_ajaran`) USING BTREE,
+  KEY `idx_namaujian_banksoalujian` (`id_nama_ujian`) USING BTREE,
+  KEY `idx_jurusan_banksoalujian` (`id_jurusan`) USING BTREE,
+  KEY `idx_mapel_banksoalujian` (`id_mapel`) USING BTREE,
+  KEY `idx_log_banksoalujian` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_banksoalujian_banksoalujian` FOREIGN KEY (`id_guru`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_jurusan_banksoalujian` FOREIGN KEY (`id_jurusan`) REFERENCES `jurusan_tabel` (`id_jurusan`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_log_banksoalujian` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_mapel_banksoalujian` FOREIGN KEY (`id_mapel`) REFERENCES `mapel_tabel` (`id_mapel`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_namaujian_banksoalujian` FOREIGN KEY (`id_nama_ujian`) REFERENCES `nama_ujian_tabel` (`id_nama_ujian`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_tahunajaran_banksoalujian` FOREIGN KEY (`id_tahun_ajaran`) REFERENCES `tahun_ajaran_tabel` (`id_tahun_ajaran`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of bank_soal_ujian_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for buku_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `buku_tabel`;
+CREATE TABLE `buku_tabel` (
+  `id_buku` int(11) NOT NULL AUTO_INCREMENT,
+  `id_mapel` int(11) DEFAULT NULL,
+  `judul_buku` text,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_buku`),
+  KEY `idx_mapelbuku_buku` (`id_mapel`) USING BTREE,
+  KEY `idx_log_buku` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_log_buku` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_mapel_buku` FOREIGN KEY (`id_mapel`) REFERENCES `mapel_tabel` (`id_mapel`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of buku_tabel
+-- ----------------------------
+INSERT INTO `buku_tabel` VALUES ('1', null, null, null, null);
+
+-- ----------------------------
+-- Table structure for draft_kartu_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `draft_kartu_tabel`;
+CREATE TABLE `draft_kartu_tabel` (
+  `id_kartu_soal` int(11) NOT NULL AUTO_INCREMENT,
+  `semester` enum('GENAP','GANJIL') NOT NULL,
+  `id_mapel` int(11) NOT NULL,
+  `id_guru` int(11) NOT NULL,
+  `id_tahun_ajaran` int(11) NOT NULL,
+  `indikator` text NOT NULL,
+  `id_buku` int(11) NOT NULL,
+  `id_soal` int(11) NOT NULL,
+  `status_verifikasi` enum('sudah','belum','mentah') DEFAULT 'belum',
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `verifikator` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_kartu_soal`),
+  KEY `idx_mapel_draftkartu` (`id_mapel`) USING BTREE,
+  KEY `idx_guru_draftkartu` (`id_guru`) USING BTREE,
+  KEY `idx_tahunajaran_draftkartu` (`id_tahun_ajaran`) USING BTREE,
+  KEY `idx_buku_draftkartu` (`id_buku`) USING BTREE,
+  KEY `idx_soal_draftkartu` (`id_soal`) USING BTREE,
+  KEY `idx_verifikator_draftkartu` (`verifikator`) USING BTREE,
+  CONSTRAINT `fk_buku_draftkartu` FOREIGN KEY (`id_buku`) REFERENCES `buku_tabel` (`id_buku`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_guru_draftkartu` FOREIGN KEY (`id_guru`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_mapel_draftkartu` FOREIGN KEY (`id_mapel`) REFERENCES `mapel_tabel` (`id_mapel`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_soal_draftkartu` FOREIGN KEY (`id_soal`) REFERENCES `soal_tabel` (`id_soal`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_tahunajaran_draftkartu` FOREIGN KEY (`id_tahun_ajaran`) REFERENCES `tahun_ajaran_tabel` (`id_tahun_ajaran`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_verifikator_draftkartu` FOREIGN KEY (`verifikator`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of draft_kartu_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for draft_kelas_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `draft_kelas_tabel`;
+CREATE TABLE `draft_kelas_tabel` (
+  `id_draft_kelas` int(11) NOT NULL AUTO_INCREMENT,
+  `id_kelas` int(11) NOT NULL,
+  `id_guru` int(11) NOT NULL,
+  `id_siswa` int(11) NOT NULL,
+  `id_tahun_ajaran` int(11) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_draft_kelas`),
+  KEY `idx_kelas_draftkelas` (`id_kelas`) USING BTREE,
+  KEY `idx_guru_draftkelas` (`id_guru`) USING BTREE,
+  KEY `idx_siswa_draftkelas` (`id_siswa`) USING BTREE,
+  KEY `idx_log_draftkelas` (`id_log`) USING BTREE,
+  KEY `idx_tahunajaran_draftkelas` (`id_tahun_ajaran`) USING BTREE,
+  CONSTRAINT `fk_guru_draftkelas` FOREIGN KEY (`id_guru`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_kelas_draftkelas` FOREIGN KEY (`id_kelas`) REFERENCES `kelas_tabel` (`id_kelas`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_log_draftkelas` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_siswa_draftkelas` FOREIGN KEY (`id_siswa`) REFERENCES `siswa_tabel` (`id_siswa`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_tahunajaran_draftkelas` FOREIGN KEY (`id_tahun_ajaran`) REFERENCES `tahun_ajaran_tabel` (`id_tahun_ajaran`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of draft_kelas_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for draft_kompetensi_dasar_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `draft_kompetensi_dasar_tabel`;
+CREATE TABLE `draft_kompetensi_dasar_tabel` (
+  `id_draft_kompetensi_dasar` int(11) NOT NULL AUTO_INCREMENT,
+  `id_kartu_soal` int(11) DEFAULT NULL,
+  `id_kompetensi_dasar` int(11) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_draft_kompetensi_dasar`),
+  KEY `idx_log_draftkomptensidasar` (`id_log`) USING BTREE,
+  KEY `idx_kartusoal_draftkompetensidasar` (`id_kartu_soal`) USING BTREE,
+  KEY `idx_kompetensidasar_draftkompetensidasar` (`id_kompetensi_dasar`) USING BTREE,
+  CONSTRAINT `fk_kartusoal_draftkompetensidasar` FOREIGN KEY (`id_kartu_soal`) REFERENCES `draft_kartu_tabel` (`id_kartu_soal`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_kompetensidasar_draftkompetensidasar` FOREIGN KEY (`id_kompetensi_dasar`) REFERENCES `kompetensi_dasar_tabel` (`id_kompetensi_dasar`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_log_draftkompetensidasar` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of draft_kompetensi_dasar_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for draft_kompetensi_inti_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `draft_kompetensi_inti_tabel`;
+CREATE TABLE `draft_kompetensi_inti_tabel` (
+  `id_draft_kompetensi_inti` int(11) NOT NULL AUTO_INCREMENT,
+  `id_kartu_soal` int(11) NOT NULL,
+  `id_kompetensi_inti` int(11) NOT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `verifikator` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_draft_kompetensi_inti`),
+  KEY `idx_kartusoal_draftkompetensiinti` (`id_kartu_soal`) USING BTREE,
+  KEY `idx_kompetensiinti_draftkompetensiinti` (`id_kompetensi_inti`) USING BTREE,
+  KEY `idx_verifikator_draftkompetensiinti` (`verifikator`) USING BTREE,
+  CONSTRAINT `fk_kartusoal_draftkompetensiinti` FOREIGN KEY (`id_kartu_soal`) REFERENCES `draft_kartu_tabel` (`id_kartu_soal`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_kompetensiinti_draftkompetensiinti` FOREIGN KEY (`id_kompetensi_inti`) REFERENCES `kompetensi_inti_tabel` (`id_kompetensi_inti`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_verifikator_draftkompetensiinti` FOREIGN KEY (`verifikator`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of draft_kompetensi_inti_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for guru_jurusan_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `guru_jurusan_tabel`;
+CREATE TABLE `guru_jurusan_tabel` (
+  `id_guru_jurusan` int(11) NOT NULL AUTO_INCREMENT,
+  `id_guru` int(11) DEFAULT NULL,
+  `id_jurusan` int(11) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_guru_jurusan`),
+  KEY `idx_guru_gurujurusan` (`id_guru`) USING BTREE,
+  KEY `idx_jurusan_gurujurusan` (`id_jurusan`) USING BTREE,
+  KEY `idx_log_gurujurusan` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_guru_gurujurusan` FOREIGN KEY (`id_guru`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_jurusan_gurujurusan` FOREIGN KEY (`id_jurusan`) REFERENCES `jurusan_tabel` (`id_jurusan`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_log_gurujurusan` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of guru_jurusan_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for guru_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `guru_tabel`;
+CREATE TABLE `guru_tabel` (
+  `id_guru` int(11) NOT NULL AUTO_INCREMENT,
+  `nomor` char(25) DEFAULT NULL,
+  `nama_guru` varchar(50) DEFAULT NULL,
+  `jenis_kelamin` enum('P','L') DEFAULT NULL,
+  `password` varchar(11) DEFAULT NULL,
+  `level` enum('guru','sekolah','super') DEFAULT 'guru',
+  `foto` text,
+  `id_instansi` int(11) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_guru`),
+  KEY `idx_instansi_guru` (`id_instansi`) USING BTREE,
+  CONSTRAINT `fk_instansi_guru` FOREIGN KEY (`id_instansi`) REFERENCES `instansi_tabel` (`id_instansi`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of guru_tabel
+-- ----------------------------
+INSERT INTO `guru_tabel` VALUES ('1', 'adminsuper', 'administrator', 'L', '', 'super', null, '1', '2016-10-01 14:49:56', '1');
+INSERT INTO `guru_tabel` VALUES ('2', 'admin', 'administrator', 'L', null, 'sekolah', null, '2', '2016-10-01 14:50:01', '1');
+
+-- ----------------------------
+-- Table structure for instansi_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `instansi_tabel`;
+CREATE TABLE `instansi_tabel` (
+  `id_instansi` int(11) NOT NULL AUTO_INCREMENT,
+  `nama_instansi` text,
+  `icon` text,
+  `logo` text,
+  `id_satuan_pendidikan` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_instansi`),
+  KEY `idx_satuanpendidikan_instansi` (`id_satuan_pendidikan`) USING BTREE,
+  CONSTRAINT `fk_satuanpendidikan_instansi` FOREIGN KEY (`id_satuan_pendidikan`) REFERENCES `satuan_pendidikan_tabel` (`id_satuan_pendidikan`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of instansi_tabel
+-- ----------------------------
+INSERT INTO `instansi_tabel` VALUES ('1', 'semua', null, null, '5');
+INSERT INTO `instansi_tabel` VALUES ('2', 'SMK Negeri 5 Malang', null, null, '5');
+
+-- ----------------------------
+-- Table structure for isi_soal_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `isi_soal_tabel`;
+CREATE TABLE `isi_soal_tabel` (
+  `id_isi_soal` int(11) NOT NULL AUTO_INCREMENT,
+  `id_bank_soal_ujian` int(11) DEFAULT NULL,
+  `id_kartu_soal` int(11) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_isi_soal`),
+  KEY `idx_banksoalujian_soal` (`id_bank_soal_ujian`) USING BTREE,
+  KEY `idx_kartusoal_soal` (`id_kartu_soal`) USING BTREE,
+  KEY `idx_guru_soal` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_banksoalujian_isisoal` FOREIGN KEY (`id_bank_soal_ujian`) REFERENCES `bank_soal_ujian_tabel` (`id_bank_soal_ujian`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_kartusoal_isisoal` FOREIGN KEY (`id_kartu_soal`) REFERENCES `draft_kartu_tabel` (`id_kartu_soal`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_log_isisoal` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of isi_soal_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for jurusan_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `jurusan_tabel`;
+CREATE TABLE `jurusan_tabel` (
+  `id_jurusan` int(11) NOT NULL AUTO_INCREMENT,
+  `jurusan` varchar(50) DEFAULT NULL,
+  `id_kelompok_jurusan` int(11) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_jurusan`),
+  KEY `idx_kelompokjurusan_jurusan` (`id_kelompok_jurusan`) USING BTREE,
+  KEY `idx_guru_jurusan` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_kelompokjurusan_jurusan` FOREIGN KEY (`id_kelompok_jurusan`) REFERENCES `kelompok_jurusan_tabel` (`id_kelompok_jurusan`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_log_jurusan` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=79 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of jurusan_tabel
+-- ----------------------------
+INSERT INTO `jurusan_tabel` VALUES ('1', 'SMK Umum', '1', '2016-10-02 06:34:08', '1');
+INSERT INTO `jurusan_tabel` VALUES ('2', 'Kriya Keramik', '3', '2016-10-02 06:36:32', '1');
+INSERT INTO `jurusan_tabel` VALUES ('3', 'Kriya Tekstil', '3', '2016-10-02 06:36:34', '1');
+INSERT INTO `jurusan_tabel` VALUES ('4', 'Kriya Kayu', '3', '2016-10-02 06:36:35', '1');
+INSERT INTO `jurusan_tabel` VALUES ('5', 'Teknik Komputer Jaringan', '2', '2016-10-02 06:36:37', '1');
+INSERT INTO `jurusan_tabel` VALUES ('6', 'Multimedia', '2', '2016-10-02 06:36:38', '1');
+INSERT INTO `jurusan_tabel` VALUES ('7', 'Animasi', '4', '2016-10-02 06:36:46', '1');
+INSERT INTO `jurusan_tabel` VALUES ('8', 'Tata Busana', '3', '2016-10-02 06:36:42', '1');
+INSERT INTO `jurusan_tabel` VALUES ('9', 'Rekayasa Perangkat Lunak', '2', '2016-10-02 06:36:40', '1');
+
+-- ----------------------------
+-- Table structure for kelas_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `kelas_tabel`;
+CREATE TABLE `kelas_tabel` (
+  `id_kelas` int(11) NOT NULL AUTO_INCREMENT,
+  `id_tingkat` int(11) NOT NULL,
+  `kelas` varchar(25) CHARACTER SET utf8 NOT NULL,
+  `id_tahun_ajaran` int(11) NOT NULL,
+  `jumlah_siswa` int(2) NOT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_kelas`),
+  KEY `idx_tingkat_kelas` (`id_tingkat`) USING BTREE,
+  KEY `idx_tahunajaran_kelas` (`id_tahun_ajaran`) USING BTREE,
+  KEY `idx_guru_kelas` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_log_kelas` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_tahunajaran_kelas` FOREIGN KEY (`id_tahun_ajaran`) REFERENCES `tahun_ajaran_tabel` (`id_tahun_ajaran`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_tingkat_kelas` FOREIGN KEY (`id_tingkat`) REFERENCES `tingkat_tabel` (`id_tingkat`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of kelas_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for kelompok_jurusan_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `kelompok_jurusan_tabel`;
+CREATE TABLE `kelompok_jurusan_tabel` (
+  `id_kelompok_jurusan` int(11) NOT NULL AUTO_INCREMENT,
+  `kelompok_jurusan` varchar(255) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_kelompok_jurusan`),
+  KEY `id_guru_kelompokjurusan` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_log_kelompokjurusan` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of kelompok_jurusan_tabel
+-- ----------------------------
+INSERT INTO `kelompok_jurusan_tabel` VALUES ('1', 'SMK Umum', '2016-10-02 06:33:28', '1');
+INSERT INTO `kelompok_jurusan_tabel` VALUES ('2', 'Teknik Komputer dan Informatika', '2016-10-02 06:33:24', '1');
+INSERT INTO `kelompok_jurusan_tabel` VALUES ('3', 'Kriya', '2016-10-02 06:33:23', '1');
+INSERT INTO `kelompok_jurusan_tabel` VALUES ('4', 'Pariwisata', '2016-10-02 06:33:21', '1');
+INSERT INTO `kelompok_jurusan_tabel` VALUES ('5', 'Seni Rupa', '2016-10-02 06:33:20', '1');
+
+-- ----------------------------
+-- Table structure for kelompok_mapel_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `kelompok_mapel_tabel`;
+CREATE TABLE `kelompok_mapel_tabel` (
+  `id_kelompok_mapel` int(11) NOT NULL AUTO_INCREMENT,
+  `nama_kelompok_mapel` enum('A','B','C1','C2','C3','lain') DEFAULT NULL,
+  `id_mapel` int(11) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_kelompok_mapel`),
+  KEY `idx_mapel_kelompokmapel` (`id_mapel`) USING BTREE,
+  KEY `idx_log_kelompokmapel` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_log_kelompokmapel` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_mapel_kelompokmapel` FOREIGN KEY (`id_mapel`) REFERENCES `mapel_tabel` (`id_mapel`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of kelompok_mapel_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for kompetensi_dasar_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `kompetensi_dasar_tabel`;
+CREATE TABLE `kompetensi_dasar_tabel` (
+  `id_kompetensi_dasar` int(11) NOT NULL AUTO_INCREMENT,
+  `no_kd` int(11) DEFAULT NULL,
+  `nama_kompetensi_dasar` text CHARACTER SET latin1,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_kompetensi_dasar`),
+  KEY `idx_guru_kompetensidasar` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_log_kompetensidasar` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of kompetensi_dasar_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for kompetensi_inti_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `kompetensi_inti_tabel`;
+CREATE TABLE `kompetensi_inti_tabel` (
+  `id_kompetensi_inti` int(11) NOT NULL AUTO_INCREMENT,
+  `nama_kompetensi_inti` text,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_kompetensi_inti`),
+  KEY `idx_guru_kompetensiinti` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_log_kompetensiinti` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of kompetensi_inti_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for kotak_pesan
+-- ----------------------------
+DROP TABLE IF EXISTS `kotak_pesan`;
+CREATE TABLE `kotak_pesan` (
+  `no` int(11) NOT NULL AUTO_INCREMENT,
+  `nama` varchar(50) CHARACTER SET utf8 DEFAULT NULL,
+  `email` varchar(50) CHARACTER SET utf8 DEFAULT NULL,
+  `isi` text CHARACTER SET utf8,
+  `tanggal` timestamp NULL DEFAULT NULL,
+  `browser` text CHARACTER SET utf8,
+  PRIMARY KEY (`no`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of kotak_pesan
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for log_activities
+-- ----------------------------
+DROP TABLE IF EXISTS `log_activities`;
+CREATE TABLE `log_activities` (
+  `id_log_activities` int(11) NOT NULL AUTO_INCREMENT,
+  `nomor_user` varchar(25) DEFAULT NULL,
+  `waktu_login` timestamp NULL DEFAULT NULL,
+  `waktu_logout` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `status` enum('on','off') DEFAULT NULL,
+  `ujian` varchar(20) DEFAULT NULL,
+  `level` int(1) DEFAULT NULL,
+  `browser` text,
+  PRIMARY KEY (`id_log_activities`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of log_activities
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for mapelkdmateri_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `mapelkdmateri_tabel`;
+CREATE TABLE `mapelkdmateri_tabel` (
+  `id_mapelkdmateri` int(11) NOT NULL AUTO_INCREMENT,
+  `id_mapel` int(11) DEFAULT NULL,
+  `id_materi` int(11) DEFAULT NULL,
+  `id_master_kompetensi_dasar` int(11) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_mapelkdmateri`),
+  KEY `fk_mapel_mapelkdmateri` (`id_mapel`),
+  KEY `fk_materi_mapelkdmateri` (`id_materi`),
+  KEY `fk_masterkompetensidasar_mapelkdmateri` (`id_master_kompetensi_dasar`),
+  KEY `fk_log_mapelkdmateri` (`id_log`),
+  CONSTRAINT `fk_log_mapelkdmateri` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_mapel_mapelkdmateri` FOREIGN KEY (`id_mapel`) REFERENCES `mapel_tabel` (`id_mapel`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_masterkompetensidasar_mapelkdmateri` FOREIGN KEY (`id_master_kompetensi_dasar`) REFERENCES `master_kompetensi_dasar_tabel` (`id_master_kompetensi_dasar`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_materi_mapelkdmateri` FOREIGN KEY (`id_materi`) REFERENCES `materi_tabel` (`id_materi`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of mapelkdmateri_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for mapel_guru_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `mapel_guru_tabel`;
+CREATE TABLE `mapel_guru_tabel` (
+  `id_mapel_guru` int(11) NOT NULL AUTO_INCREMENT,
+  `id_guru` int(11) DEFAULT NULL,
+  `id_mapel` int(11) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_mapel_guru`),
+  KEY `idx_guru_mapelguru` (`id_guru`) USING BTREE,
+  KEY `idx_log_mapelguru` (`id_log`) USING BTREE,
+  KEY `idx_mapel_mapelguru` (`id_mapel`) USING BTREE,
+  CONSTRAINT `fk_guru_mapelguru` FOREIGN KEY (`id_guru`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_log_mapelguru` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_mapel_mapelguru` FOREIGN KEY (`id_mapel`) REFERENCES `mapel_tabel` (`id_mapel`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of mapel_guru_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for mapel_jurusan_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `mapel_jurusan_tabel`;
+CREATE TABLE `mapel_jurusan_tabel` (
+  `id_mapel_jurusan` int(11) NOT NULL AUTO_INCREMENT,
+  `id_mapel` int(11) DEFAULT NULL,
+  `id_jurusan` int(11) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_mapel_jurusan`),
+  KEY `idx_jurusan_mapeljurusan` (`id_jurusan`) USING BTREE,
+  KEY `idx_mapel_mapeljurusan` (`id_mapel`) USING BTREE,
+  KEY `idx_logguru_mapeljurusan` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_jurusan_mapeljurusan` FOREIGN KEY (`id_jurusan`) REFERENCES `jurusan_tabel` (`id_jurusan`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_logguru_mapeljurusan` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_mapel_mapeljurusan` FOREIGN KEY (`id_mapel`) REFERENCES `mapel_tabel` (`id_mapel`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of mapel_jurusan_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for mapel_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `mapel_tabel`;
+CREATE TABLE `mapel_tabel` (
+  `id_mapel` int(11) NOT NULL AUTO_INCREMENT,
+  `kode_mapel` varchar(5) DEFAULT NULL,
+  `nama_mapel` varchar(11) DEFAULT NULL,
+  `id_tingkat` int(11) DEFAULT NULL,
+  `id_satuan_pendidikan` int(11) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_mapel`),
+  KEY `idx_namamapel_mapel` (`nama_mapel`) USING BTREE,
+  KEY `idx_log_mapel` (`id_log`) USING BTREE,
+  KEY `idx_tingkat_mapel` (`id_tingkat`) USING BTREE,
+  KEY `idx_satuanpendidikan_mapel` (`id_satuan_pendidikan`) USING BTREE,
+  CONSTRAINT `fk_log_mapel` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_satuanpendidikan_mapel` FOREIGN KEY (`id_satuan_pendidikan`) REFERENCES `satuan_pendidikan_tabel` (`id_satuan_pendidikan`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_tingkat_mapel` FOREIGN KEY (`id_tingkat`) REFERENCES `tingkat_tabel` (`id_tingkat`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of mapel_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for master_kompetensi_dasar_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `master_kompetensi_dasar_tabel`;
+CREATE TABLE `master_kompetensi_dasar_tabel` (
+  `id_master_kompetensi_dasar` int(11) NOT NULL AUTO_INCREMENT,
+  `pembelajaran` text,
+  `penilaian` text,
+  `alokasi_waktu` text,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_master_kompetensi_dasar`),
+  KEY `idx_log_masterkomptensidasar` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_log_masterkompetensidasar` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of master_kompetensi_dasar_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for master_materi_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `master_materi_tabel`;
+CREATE TABLE `master_materi_tabel` (
+  `id_master_kompetensi_inti` int(11) NOT NULL AUTO_INCREMENT,
+  `id_kartu_soal` int(11) DEFAULT NULL,
+  `id_materi` int(11) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_master_kompetensi_inti`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of master_materi_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for materi_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `materi_tabel`;
+CREATE TABLE `materi_tabel` (
+  `id_materi` int(11) NOT NULL AUTO_INCREMENT,
+  `no_materi` int(11) DEFAULT NULL,
+  `nama_materi` text,
+  `log` time DEFAULT NULL,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_materi`),
+  KEY `idx_log_materi` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_log_materi` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of materi_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for nama_ujian_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `nama_ujian_tabel`;
+CREATE TABLE `nama_ujian_tabel` (
+  `id_nama_ujian` int(11) NOT NULL AUTO_INCREMENT,
+  `nama_ujian` varchar(50) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_nama_ujian`),
+  KEY `idx_log_namaujian` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_log_namaujian` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of nama_ujian_tabel
+-- ----------------------------
+INSERT INTO `nama_ujian_tabel` VALUES ('1', 'Simulasi', '2016-10-02 18:12:11', '1');
+INSERT INTO `nama_ujian_tabel` VALUES ('2', 'Pre Test', '2016-10-02 18:12:10', '1');
+INSERT INTO `nama_ujian_tabel` VALUES ('3', 'UTS Ganjil', '2016-10-02 18:12:12', '1');
+INSERT INTO `nama_ujian_tabel` VALUES ('4', 'UTS Genap', '2016-10-02 18:12:13', '1');
+INSERT INTO `nama_ujian_tabel` VALUES ('5', 'UAS Ganjil', '2016-10-02 18:12:13', '1');
+INSERT INTO `nama_ujian_tabel` VALUES ('6', 'UAS Genap', '2016-10-02 18:12:14', '1');
+INSERT INTO `nama_ujian_tabel` VALUES ('7', 'Ujian Sekolah', '2016-10-02 18:12:15', '1');
+INSERT INTO `nama_ujian_tabel` VALUES ('8', 'Lomba', '2016-10-02 18:12:16', '1');
+INSERT INTO `nama_ujian_tabel` VALUES ('9', 'UH 1', '2016-10-02 18:12:17', '1');
+INSERT INTO `nama_ujian_tabel` VALUES ('10', 'UH 2', '2016-10-02 18:12:17', '1');
+INSERT INTO `nama_ujian_tabel` VALUES ('11', 'UH 3', '2016-10-02 18:12:18', '1');
+INSERT INTO `nama_ujian_tabel` VALUES ('12', 'UH 4', '2016-10-02 18:12:18', '1');
+INSERT INTO `nama_ujian_tabel` VALUES ('13', 'UH 5', '2016-10-02 18:12:19', '1');
+INSERT INTO `nama_ujian_tabel` VALUES ('14', 'UH 6', '2016-10-02 18:12:20', '1');
+INSERT INTO `nama_ujian_tabel` VALUES ('15', 'UH 7', '2016-10-02 18:12:21', '1');
+INSERT INTO `nama_ujian_tabel` VALUES ('16', 'UH 8', '2016-10-02 18:12:21', '1');
+INSERT INTO `nama_ujian_tabel` VALUES ('17', 'UH 9', '2016-10-02 18:12:22', '1');
+INSERT INTO `nama_ujian_tabel` VALUES ('18', 'UH 10', '2016-10-02 18:12:23', '1');
+INSERT INTO `nama_ujian_tabel` VALUES ('19', 'UH 11', '2016-10-02 18:12:23', '1');
+INSERT INTO `nama_ujian_tabel` VALUES ('20', 'UH 12', '2016-10-02 18:12:25', '1');
+
+-- ----------------------------
+-- Table structure for opsi_a_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `opsi_a_tabel`;
+CREATE TABLE `opsi_a_tabel` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `isi_opsi` text,
+  `skor` double(5,0) DEFAULT '0',
+  `id_soal` int(11) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_soal_opsia` (`id_soal`) USING BTREE,
+  CONSTRAINT `fk_soal_opsia` FOREIGN KEY (`id_soal`) REFERENCES `soal_tabel` (`id_soal`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of opsi_a_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for opsi_b_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `opsi_b_tabel`;
+CREATE TABLE `opsi_b_tabel` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `isi_opsi` text,
+  `skor` double(5,0) DEFAULT '0',
+  `id_soal` int(11) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_soal_opsib` (`id_soal`) USING BTREE,
+  CONSTRAINT `fk_soal_opsib` FOREIGN KEY (`id_soal`) REFERENCES `soal_tabel` (`id_soal`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of opsi_b_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for opsi_c_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `opsi_c_tabel`;
+CREATE TABLE `opsi_c_tabel` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `isi_opsi` text,
+  `skor` double(5,0) DEFAULT '0',
+  `id_soal` int(11) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_soal_opsic` (`id_soal`) USING BTREE,
+  CONSTRAINT `fk_soal_opsic` FOREIGN KEY (`id_soal`) REFERENCES `soal_tabel` (`id_soal`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of opsi_c_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for opsi_d_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `opsi_d_tabel`;
+CREATE TABLE `opsi_d_tabel` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `isi_opsi` text,
+  `skor` double(5,0) DEFAULT '0',
+  `id_soal` int(11) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_soal_opsid` (`id_soal`) USING BTREE,
+  CONSTRAINT `fk_soal_opsid` FOREIGN KEY (`id_soal`) REFERENCES `soal_tabel` (`id_soal`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of opsi_d_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for opsi_essay_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `opsi_essay_tabel`;
+CREATE TABLE `opsi_essay_tabel` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `isi_opsi` text,
+  `skor` double(5,0) DEFAULT '0',
+  `id_soal` int(11) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_opsiessaytabel_soal` (`id_soal`) USING BTREE,
+  CONSTRAINT `fk_opsiessaytabel_soal` FOREIGN KEY (`id_soal`) REFERENCES `soal_tabel` (`id_soal`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of opsi_essay_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for opsi_e_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `opsi_e_tabel`;
+CREATE TABLE `opsi_e_tabel` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `isi_opsi` text,
+  `skor` double(5,0) DEFAULT '0',
+  `id_soal` int(11) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_soal_opsie` (`id_soal`) USING BTREE,
+  CONSTRAINT `fk_soal_opsie` FOREIGN KEY (`id_soal`) REFERENCES `soal_tabel` (`id_soal`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of opsi_e_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for pengaturan_nilai_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `pengaturan_nilai_tabel`;
+CREATE TABLE `pengaturan_nilai_tabel` (
+  `id_pengaturan` int(11) NOT NULL AUTO_INCREMENT,
+  `id_bank_soal_ujian` int(11) DEFAULT NULL,
+  `nilai_minimal` double(5,0) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_pengaturan`),
+  KEY `idx_banksoalujian_pengaturannilai` (`id_bank_soal_ujian`) USING BTREE,
+  KEY `idx_log_pengaturannilai` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_banksoalujian_pengaturannilai` FOREIGN KEY (`id_bank_soal_ujian`) REFERENCES `bank_soal_ujian_tabel` (`id_bank_soal_ujian`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_log_pengaturannilai` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of pengaturan_nilai_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for pilihan_jawab_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `pilihan_jawab_tabel`;
+CREATE TABLE `pilihan_jawab_tabel` (
+  `id_pilihan_jawab` int(11) NOT NULL AUTO_INCREMENT,
+  `id_siswa` int(11) NOT NULL,
+  `id_bank_soal_ujian` int(11) DEFAULT NULL,
+  `id_kartu_soal` int(11) DEFAULT NULL,
+  `jawaban` text,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_pilihan_jawab`),
+  KEY `idx_siswa_pilihanjawab` (`id_siswa`) USING BTREE,
+  KEY `idx_banksoalujian_pilihanjawab` (`id_bank_soal_ujian`) USING BTREE,
+  KEY `idx_kartusoal_pilihanjawab` (`id_kartu_soal`) USING BTREE,
+  CONSTRAINT `fk_banksoalujian_pilihanjawab` FOREIGN KEY (`id_bank_soal_ujian`) REFERENCES `bank_soal_ujian_tabel` (`id_bank_soal_ujian`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_kartusoal_pilihanjawab` FOREIGN KEY (`id_kartu_soal`) REFERENCES `draft_kartu_tabel` (`id_kartu_soal`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_siswa_pilihanjawab` FOREIGN KEY (`id_siswa`) REFERENCES `siswa_tabel` (`id_siswa`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of pilihan_jawab_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for satuan_pendidikan_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `satuan_pendidikan_tabel`;
+CREATE TABLE `satuan_pendidikan_tabel` (
+  `id_satuan_pendidikan` int(11) NOT NULL,
+  `satuan_pendidikan` varchar(20) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_satuan_pendidikan`),
+  KEY `idx_log_satuanpendidikan` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_log_satuanpendidikan` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of satuan_pendidikan_tabel
+-- ----------------------------
+INSERT INTO `satuan_pendidikan_tabel` VALUES ('1', 'SD/MI', '2016-10-01 14:47:22', '1');
+INSERT INTO `satuan_pendidikan_tabel` VALUES ('2', 'SMP/MTS', '2016-10-01 14:48:24', '1');
+INSERT INTO `satuan_pendidikan_tabel` VALUES ('3', 'SMA/MA', '2016-10-01 14:48:24', '1');
+INSERT INTO `satuan_pendidikan_tabel` VALUES ('5', 'SMK/MAK', '2016-10-01 14:48:26', '1');
+
+-- ----------------------------
+-- Table structure for siswa_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `siswa_tabel`;
+CREATE TABLE `siswa_tabel` (
+  `id_siswa` int(11) NOT NULL AUTO_INCREMENT,
+  `nomor` char(25) NOT NULL,
+  `nisn` char(25) DEFAULT NULL,
+  `nama_siswa` varchar(100) NOT NULL,
+  `jenis_kelamin` enum('P','L') NOT NULL,
+  `id_tingkat` int(11) NOT NULL,
+  `id_jurusan` int(11) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `level` enum('siswa') DEFAULT 'siswa',
+  `foto` text,
+  `id_tahun_ajaran` int(11) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_siswa`),
+  KEY `idx_tingkat_siswa` (`id_tingkat`) USING BTREE,
+  KEY `idx_jurusan_siswa` (`id_jurusan`) USING BTREE,
+  KEY `idx_tahunajaran_siswa` (`id_tahun_ajaran`) USING BTREE,
+  KEY `idx_log_siswa` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_jurusan_siswa` FOREIGN KEY (`id_jurusan`) REFERENCES `jurusan_tabel` (`id_jurusan`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_log_siswa` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_tahunajaran_siswa` FOREIGN KEY (`id_tahun_ajaran`) REFERENCES `tahun_ajaran_tabel` (`id_tahun_ajaran`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_tingkat_siswa` FOREIGN KEY (`id_tingkat`) REFERENCES `tingkat_tabel` (`id_tingkat`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of siswa_tabel
+-- ----------------------------
+INSERT INTO `siswa_tabel` VALUES ('1', '1234/567.890', '1234567890', 'Siswa Keramik 1', 'P', '10', '2', null, 'siswa', null, '1', '2016-10-02 06:39:13', '1');
+
+-- ----------------------------
+-- Table structure for soal_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `soal_tabel`;
+CREATE TABLE `soal_tabel` (
+  `id_soal` int(11) NOT NULL AUTO_INCREMENT,
+  `soal` text,
+  `jawaban` text,
+  `jml_opsi` enum('1','2','3','4','5') DEFAULT NULL,
+  `indikator_soal` text,
+  `pembahasan` text,
+  `jenis_soal` enum('multiple choice','true false','essay','matching','fill in the blank','sequence','multiple response') DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_soal`),
+  KEY `idx_log_soal` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_log_soal` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of soal_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for tahun_ajaran_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `tahun_ajaran_tabel`;
+CREATE TABLE `tahun_ajaran_tabel` (
+  `id_tahun_ajaran` int(11) NOT NULL AUTO_INCREMENT,
+  `tahun_ajaran` varchar(10) CHARACTER SET utf8 NOT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_tahun_ajaran`),
+  KEY `idx_log_tahunajaran` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_log_tahunajaran` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of tahun_ajaran_tabel
+-- ----------------------------
+INSERT INTO `tahun_ajaran_tabel` VALUES ('1', '2016/2017', '2016-10-01 14:46:28', '1');
+
+-- ----------------------------
+-- Table structure for temp_soal_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `temp_soal_tabel`;
+CREATE TABLE `temp_soal_tabel` (
+  `id_soal` int(11) NOT NULL AUTO_INCREMENT,
+  `soal` text,
+  `jawaban` text,
+  `jml_opsi` enum('1','2','3','4','5') DEFAULT NULL,
+  `indikator_soal` text,
+  `pembahasan` text,
+  `jenis_soal` enum('multiple choice','true false','essay','matching','fill in the blank','sequence','multiple response') DEFAULT NULL,
+  `isi_opsi_A` varchar(255) DEFAULT NULL,
+  `isi_opsi_B` varchar(255) DEFAULT NULL,
+  `isi_opsi_C` varchar(255) DEFAULT NULL,
+  `isi_opsi_D` varchar(255) DEFAULT NULL,
+  `isi_opsi_E` varchar(255) DEFAULT NULL,
+  `isi_opsi_essay` varchar(255) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_soal`),
+  KEY `idx_log_tempsoal` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_log_tempsoal` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='tabel ini digunakan untuk menyimpan soal mentah hasil import atau soal yg dimasukkan sebelum melalui fasilitas kartu soal';
+
+-- ----------------------------
+-- Records of temp_soal_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for tingkat_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `tingkat_tabel`;
+CREATE TABLE `tingkat_tabel` (
+  `id_tingkat` int(11) NOT NULL,
+  `tingkat` char(5) DEFAULT NULL,
+  `id_satuan_pendidikan` int(11) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_tingkat`),
+  KEY `idx_satuanpendidikan_tingkat` (`id_satuan_pendidikan`) USING BTREE,
+  KEY `idx_log_tingkat` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_log_tingkat` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_satuanpendidikan_tingkat` FOREIGN KEY (`id_satuan_pendidikan`) REFERENCES `satuan_pendidikan_tabel` (`id_satuan_pendidikan`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of tingkat_tabel
+-- ----------------------------
+INSERT INTO `tingkat_tabel` VALUES ('1', 'I', '1', '2016-10-01 14:53:49', null);
+INSERT INTO `tingkat_tabel` VALUES ('2', 'II', '1', '2016-10-01 14:53:50', null);
+INSERT INTO `tingkat_tabel` VALUES ('3', 'III', '1', '2016-10-01 14:53:50', null);
+INSERT INTO `tingkat_tabel` VALUES ('4', 'IV', '1', '2016-10-01 14:53:50', null);
+INSERT INTO `tingkat_tabel` VALUES ('5', 'V', '1', '2016-10-01 14:53:50', null);
+INSERT INTO `tingkat_tabel` VALUES ('6', 'VI', '1', '2016-10-01 14:53:51', null);
+INSERT INTO `tingkat_tabel` VALUES ('7', 'VII', '2', '2016-10-01 14:53:51', null);
+INSERT INTO `tingkat_tabel` VALUES ('8', 'VIII', '2', '2016-10-01 14:53:51', null);
+INSERT INTO `tingkat_tabel` VALUES ('9', 'IX', '2', '2016-10-01 14:53:51', null);
+INSERT INTO `tingkat_tabel` VALUES ('10', 'X', '3', '2016-10-01 14:53:51', null);
+INSERT INTO `tingkat_tabel` VALUES ('11', 'XI', '3', '2016-10-01 14:53:52', null);
+INSERT INTO `tingkat_tabel` VALUES ('12', 'XII', '3', '2016-10-01 14:53:53', null);
+
+-- ----------------------------
+-- Table structure for x_draft_kompetensi_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `x_draft_kompetensi_tabel`;
+CREATE TABLE `x_draft_kompetensi_tabel` (
+  `id_draft_kompetensi` int(11) NOT NULL AUTO_INCREMENT,
+  `id_kelompok_mapel` int(11) DEFAULT NULL,
+  `id_mapel` int(11) DEFAULT NULL,
+  `id_kompetensi_inti` int(11) DEFAULT NULL,
+  `id_kompetensi_dasar` int(11) DEFAULT NULL,
+  `log` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `id_log` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_draft_kompetensi`),
+  KEY `idx_kelompokmapel_draftkompetensi` (`id_kelompok_mapel`) USING BTREE,
+  KEY `idx_mapel_draftkompetensi` (`id_mapel`) USING BTREE,
+  KEY `idx_kompetensiinti_draftkompetensi` (`id_kompetensi_inti`) USING BTREE,
+  KEY `idx_kompetensidasar_draftkompetensi` (`id_kompetensi_dasar`) USING BTREE,
+  KEY `idx_guru_draftkompetensi` (`id_log`) USING BTREE,
+  CONSTRAINT `fk_kelompokmapel_draftkompetensi` FOREIGN KEY (`id_kelompok_mapel`) REFERENCES `kelompok_mapel_tabel` (`id_kelompok_mapel`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_kompetensidasar_draftkompetensi` FOREIGN KEY (`id_kompetensi_dasar`) REFERENCES `kompetensi_dasar_tabel` (`id_kompetensi_dasar`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_kompetensiinti_draftkompetensi` FOREIGN KEY (`id_kompetensi_inti`) REFERENCES `kompetensi_inti_tabel` (`id_kompetensi_inti`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_log_draftkompetensi` FOREIGN KEY (`id_log`) REFERENCES `guru_tabel` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_mapel_draftkompetensi` FOREIGN KEY (`id_mapel`) REFERENCES `mapel_tabel` (`id_mapel`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of x_draft_kompetensi_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for x_point_pelanggaran_tabel
+-- ----------------------------
+DROP TABLE IF EXISTS `x_point_pelanggaran_tabel`;
+CREATE TABLE `x_point_pelanggaran_tabel` (
+  `id_point_pelanggaran` int(100) NOT NULL AUTO_INCREMENT,
+  `kategori_pelanggaran` enum('BERAT','SEDANG','RINGAN') CHARACTER SET utf8 DEFAULT NULL,
+  `pelanggaran` varchar(100) CHARACTER SET utf8 DEFAULT NULL,
+  `point_pelanggaran` int(3) DEFAULT NULL,
+  PRIMARY KEY (`id_point_pelanggaran`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of x_point_pelanggaran_tabel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for x_share_bank
+-- ----------------------------
+DROP TABLE IF EXISTS `x_share_bank`;
+CREATE TABLE `x_share_bank` (
+  `id_share` int(100) NOT NULL AUTO_INCREMENT,
+  `id_bank_soal_ujian` int(100) DEFAULT NULL,
+  `id_guru` int(11) DEFAULT NULL,
+  `tanggal_share` time DEFAULT NULL,
+  PRIMARY KEY (`id_share`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of x_share_bank
+-- ----------------------------
